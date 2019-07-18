@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_ABAPGIT_OBJECT_OSOD</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>OSOD - Generic Data Source (delivered)</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_ABAPGIT_OBJECT_OSOD</CLSNAME>
+     <CMPNAME>MC_OBJVERS_A</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>OLTP Source Version - Active</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_ABAPGIT_OBJECT_OSOD</CLSNAME>
+     <CMPNAME>MC_OBJVERS_D</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>OLTP Source Version - Delivered</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_ABAPGIT_OBJECT_OSOD</CLSNAME>
+     <CMPNAME>MV_OBJVERS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>OLTP Source Version</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>
