@@ -17,7 +17,7 @@ CLASS ZCL_ABAPGIT_OBJECT_TTYP IMPLEMENTATION.
 
     SELECT SINGLE as4user FROM dd40l INTO rv_user
       WHERE typename = ms_item-obj_name
-      AND as4local = 'A'.
+      AND as4local IN ('A', 'L', 'N').
     IF sy-subrc <> 0.
       rv_user = c_user_unknown.
     ENDIF.
@@ -118,7 +118,7 @@ CLASS ZCL_ABAPGIT_OBJECT_TTYP IMPLEMENTATION.
 
     SELECT SINGLE typename FROM dd40l INTO lv_typename
       WHERE typename = ms_item-obj_name
-      AND as4local = 'A'.
+      AND as4local IN ('A', 'L', 'N').
     rv_bool = boolc( sy-subrc = 0 ).
 
   ENDMETHOD.
@@ -174,7 +174,7 @@ CLASS ZCL_ABAPGIT_OBJECT_TTYP IMPLEMENTATION.
     CALL FUNCTION 'DDIF_TTYP_GET'
       EXPORTING
         name          = lv_name
-        state         = 'A'
+        state         = 'M'
         langu         = mv_language
       IMPORTING
         dd40v_wa      = ls_dd40v

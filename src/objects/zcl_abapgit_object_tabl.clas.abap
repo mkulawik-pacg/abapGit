@@ -364,22 +364,19 @@ CLASS ZCL_ABAPGIT_OBJECT_TABL IMPLEMENTATION.
     SELECT as4user as4date as4time
       FROM dd02l INTO TABLE lt_data
       WHERE tabname = ms_item-obj_name
-      AND as4local = 'A'
-      AND as4vers = '0000'.
+      AND as4local IN ('A', 'L', 'N').
 
     SELECT as4user as4date as4time
       APPENDING TABLE lt_data
       FROM dd09l
       WHERE tabname = ms_item-obj_name
-      AND as4local = 'A'
-      AND as4vers = '0000'.
+      AND as4local IN ('A', 'L', 'N').
 
     SELECT as4user as4date as4time
       APPENDING TABLE lt_data
       FROM dd12l
       WHERE sqltab = ms_item-obj_name
-      AND as4local = 'A'
-      AND as4vers = '0000'.
+      AND as4local IN ('A', 'L', 'N').
 
     SORT lt_data BY as4date DESCENDING as4time DESCENDING.
 
@@ -415,8 +412,7 @@ CLASS ZCL_ABAPGIT_OBJECT_TABL IMPLEMENTATION.
       lv_no_ask = abap_true.
       SELECT SINGLE tabclass FROM dd02l INTO lv_tabclass
         WHERE tabname = ms_item-obj_name
-        AND as4local = 'A'
-        AND as4vers = '0000'.
+        AND as4local IN ('A', 'L', 'N').
       IF sy-subrc = 0 AND lv_tabclass = 'TRANSP'.
 
 * Avoid dump in dynamic SELECT in case the table does not exist on database
@@ -579,8 +575,7 @@ CLASS ZCL_ABAPGIT_OBJECT_TABL IMPLEMENTATION.
 
     SELECT SINGLE tabname FROM dd02l INTO lv_tabname
       WHERE tabname = ms_item-obj_name
-      AND as4local = 'A'
-      AND as4vers = '0000'.
+      AND as4local IN ('A', 'L', 'N').
     rv_bool = boolc( sy-subrc = 0 ).
 
   ENDMETHOD.

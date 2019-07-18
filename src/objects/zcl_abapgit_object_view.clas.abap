@@ -46,12 +46,40 @@ ENDCLASS.
 CLASS ZCL_ABAPGIT_OBJECT_VIEW IMPLEMENTATION.
 
 
+  METHOD read_view.
+
+    DATA: lv_name TYPE ddobjname.
+
+    lv_name = ms_item-obj_name.
+
+    CALL FUNCTION 'DDIF_VIEW_GET'
+      EXPORTING
+        name          = lv_name
+        state         = 'M'
+        langu         = mv_language
+      IMPORTING
+        dd25v_wa      = es_dd25v
+        dd09l_wa      = es_dd09l
+      TABLES
+        dd26v_tab     = et_dd26v
+        dd27p_tab     = et_dd27p
+        dd28j_tab     = et_dd28j
+        dd28v_tab     = et_dd28v
+      EXCEPTIONS
+        illegal_input = 1
+        OTHERS        = 2.
+    IF sy-subrc <> 0.
+      zcx_abapgit_exception=>raise( 'error from DDIF_VIEW_GET' ).
+    ENDIF.
+
+  ENDMETHOD.
+
+
   METHOD zif_abapgit_object~changed_by.
 
     SELECT SINGLE as4user FROM dd25l INTO rv_user
       WHERE viewname = ms_item-obj_name
-      AND as4local = 'A'
-      AND as4vers = '0000'.
+      AND as4local IN ('A', 'L', 'N').
     IF sy-subrc <> 0.
       rv_user = c_user_unknown.
     ENDIF.
@@ -145,8 +173,7 @@ CLASS ZCL_ABAPGIT_OBJECT_VIEW IMPLEMENTATION.
 
     SELECT SINGLE viewname FROM dd25l INTO lv_viewname
       WHERE viewname = ms_item-obj_name
-      AND as4local = 'A'
-      AND as4vers = '0000'.
+      AND as4local IN ('A', 'L', 'N').
     rv_bool = boolc( sy-subrc = 0 ).
 
     IF rv_bool = abap_true.
@@ -299,33 +326,4 @@ CLASS ZCL_ABAPGIT_OBJECT_VIEW IMPLEMENTATION.
                  iv_name = 'DD28V_TABLE' ).
 
   ENDMETHOD.
-
-  METHOD read_view.
-
-    DATA: lv_name TYPE ddobjname.
-
-    lv_name = ms_item-obj_name.
-
-    CALL FUNCTION 'DDIF_VIEW_GET'
-      EXPORTING
-        name          = lv_name
-        state         = 'A'
-        langu         = mv_language
-      IMPORTING
-        dd25v_wa      = es_dd25v
-        dd09l_wa      = es_dd09l
-      TABLES
-        dd26v_tab     = et_dd26v
-        dd27p_tab     = et_dd27p
-        dd28j_tab     = et_dd28j
-        dd28v_tab     = et_dd28v
-      EXCEPTIONS
-        illegal_input = 1
-        OTHERS        = 2.
-    IF sy-subrc <> 0.
-      zcx_abapgit_exception=>raise( 'error from DDIF_VIEW_GET' ).
-    ENDIF.
-
-  ENDMETHOD.
-
 ENDCLASS.

@@ -20,8 +20,7 @@ CLASS ZCL_ABAPGIT_OBJECT_ENQU IMPLEMENTATION.
     SELECT SINGLE as4user FROM dd25l
       INTO rv_user
       WHERE viewname = ms_item-obj_name
-      AND as4local = 'A'
-      AND as4vers  = '0000'.
+      AND as4local IN ('A', 'L', 'N').
     IF sy-subrc <> 0.
       rv_user = c_user_unknown.
     ENDIF.
@@ -102,8 +101,7 @@ CLASS ZCL_ABAPGIT_OBJECT_ENQU IMPLEMENTATION.
 
     SELECT SINGLE viewname FROM dd25l INTO lv_viewname
       WHERE viewname = ms_item-obj_name
-      AND as4local = 'A'
-      AND as4vers = '0000'.
+      AND as4local IN ('A', 'L', 'N').
     rv_bool = boolc( sy-subrc = 0 ).
 
   ENDMETHOD.
@@ -157,7 +155,7 @@ CLASS ZCL_ABAPGIT_OBJECT_ENQU IMPLEMENTATION.
     CALL FUNCTION 'DDIF_ENQU_GET'
       EXPORTING
         name          = lv_name
-        state         = 'A'
+        state         = 'M'
         langu         = mv_language
       IMPORTING
         dd25v_wa      = ls_dd25v

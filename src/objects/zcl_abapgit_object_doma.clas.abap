@@ -185,8 +185,7 @@ CLASS ZCL_ABAPGIT_OBJECT_DOMA IMPLEMENTATION.
 
     SELECT SINGLE as4user FROM dd01l INTO rv_user
       WHERE domname = ms_item-obj_name
-      AND as4local = 'A'
-      AND as4vers = '0000'.
+      AND as4local IN ('A', 'L', 'N').
     IF sy-subrc <> 0.
       rv_user = c_user_unknown.
     ENDIF.
@@ -299,8 +298,7 @@ CLASS ZCL_ABAPGIT_OBJECT_DOMA IMPLEMENTATION.
 
     SELECT SINGLE domname FROM dd01l INTO lv_domname
       WHERE domname = ms_item-obj_name
-      AND as4local = 'A'
-      AND as4vers = '0000'.
+      AND as4local IN ('A', 'L', 'N').
     rv_bool = boolc( sy-subrc = 0 ).
 
   ENDMETHOD.

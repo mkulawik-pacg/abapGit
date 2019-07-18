@@ -59,7 +59,7 @@ CLASS ZCL_ABAPGIT_OBJECT_PARA IMPLEMENTATION.
     ELSE.
       SELECT COUNT(*) FROM dd04l BYPASSING BUFFER
       WHERE  memoryid = lv_paramid
-      AND as4local = 'A'.
+      AND as4local IN ('A', 'L', 'N').
       IF sy-subrc = 0.
         zcx_abapgit_exception=>raise( 'PARA: Parameter is still used' ).
       ENDIF.

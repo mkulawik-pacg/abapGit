@@ -17,7 +17,7 @@ CLASS ZCL_ABAPGIT_OBJECT_SHLP IMPLEMENTATION.
 
     SELECT SINGLE as4user FROM dd30l INTO rv_user
       WHERE shlpname = ms_item-obj_name
-      AND as4local = 'A'.                               "#EC CI_GENBUFF
+      AND as4local IN ('A', 'L', 'N').                               "#EC CI_GENBUFF
     IF sy-subrc <> 0.
       rv_user = c_user_unknown.
     ENDIF.
@@ -102,7 +102,7 @@ CLASS ZCL_ABAPGIT_OBJECT_SHLP IMPLEMENTATION.
 
     SELECT SINGLE shlpname FROM dd30l INTO lv_shlpname
       WHERE shlpname = ms_item-obj_name
-      AND as4local = 'A'.                               "#EC CI_GENBUFF
+      AND as4local IN ('A', 'L', 'N').                               "#EC CI_GENBUFF
     rv_bool = boolc( sy-subrc = 0 ).
 
   ENDMETHOD.
@@ -158,7 +158,7 @@ CLASS ZCL_ABAPGIT_OBJECT_SHLP IMPLEMENTATION.
     CALL FUNCTION 'DDIF_SHLP_GET'
       EXPORTING
         name          = lv_name
-        state         = 'A'
+        state         = 'M'
         langu         = mv_language
       IMPORTING
         dd30v_wa      = ls_dd30v

@@ -143,8 +143,7 @@ CLASS ZCL_ABAPGIT_OBJECT_DTEL IMPLEMENTATION.
 
     SELECT SINGLE as4user FROM dd04l INTO rv_user
       WHERE rollname = ms_item-obj_name
-      AND as4local = 'A'
-      AND as4vers = '0000'.
+      AND as4local IN ('A', 'L', 'N').
     IF sy-subrc <> 0.
       rv_user = c_user_unknown.
     ENDIF.
@@ -223,8 +222,7 @@ CLASS ZCL_ABAPGIT_OBJECT_DTEL IMPLEMENTATION.
 
     SELECT SINGLE rollname FROM dd04l INTO lv_rollname
       WHERE rollname = ms_item-obj_name
-      AND as4local = 'A'
-      AND as4vers = '0000'.
+      AND as4local IN ('A', 'L', 'N').
     rv_bool = boolc( sy-subrc = 0 ).
 
   ENDMETHOD.
@@ -278,8 +276,7 @@ CLASS ZCL_ABAPGIT_OBJECT_DTEL IMPLEMENTATION.
     SELECT SINGLE * FROM dd04l
       INTO CORRESPONDING FIELDS OF ls_dd04v
       WHERE rollname = lv_name
-      AND as4local = 'A'
-      AND as4vers = '0000'.
+      AND as4local IN ('A', 'L', 'N').
     IF sy-subrc <> 0 OR ls_dd04v IS INITIAL.
       zcx_abapgit_exception=>raise( 'Not found in DD04L' ) ##NO_TEXT.
     ENDIF.
@@ -288,8 +285,7 @@ CLASS ZCL_ABAPGIT_OBJECT_DTEL IMPLEMENTATION.
       INTO CORRESPONDING FIELDS OF ls_dd04v
       WHERE rollname = lv_name
       AND ddlanguage = mv_language
-      AND as4local = 'A'
-      AND as4vers = '0000'.
+      AND as4local IN ('A', 'L', 'N').
 
     CLEAR: ls_dd04v-as4user,
            ls_dd04v-as4date,

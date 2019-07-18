@@ -97,8 +97,7 @@ CLASS ZCL_ABAPGIT_DEPENDENCIES IMPLEMENTATION.
           SELECT SINGLE tabclass FROM dd02l
             INTO lv_tabclass
             WHERE tabname = <ls_tadir>-obj_name
-            AND as4local = 'A'
-            AND as4vers = '0000'.
+            AND as4local IN ('A', 'L', 'N').
           IF sy-subrc = 0 AND lv_tabclass = 'APPEND'.
 * delete append structures before database tables
             <ls_tadir>-korrnum = '6500'.
