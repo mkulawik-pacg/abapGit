@@ -158,11 +158,14 @@ CLASS ZCL_ABAPGIT_OBJECT_NROB IMPLEMENTATION.
     io_xml->read( EXPORTING iv_name = 'TEXT'
                   CHANGING cg_data = ls_text ).
 
+    DATA lv_msgty TYPE symsgty.
     CALL FUNCTION 'NUMBER_RANGE_OBJECT_UPDATE'
       EXPORTING
         indicator                 = 'I'
         object_attributes         = ls_attributes
         object_text               = ls_text
+      IMPORTING
+        returncode                = lv_msgty
       TABLES
         errors                    = lt_errors
       EXCEPTIONS
