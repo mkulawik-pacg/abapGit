@@ -85,9 +85,12 @@ CLASS ZCL_ABAPGIT_OBJECT_WDCA IMPLEMENTATION.
                  CHANGING cg_data = lt_config_appt[] ).
     io_xml->read( EXPORTING iv_name = 'WDY_CONFIG_COMPT'
                  CHANGING cg_data = lt_config_compt[] ).
-    io_xml->read( EXPORTING iv_name = 'CONFIG_DATA'
-                 CHANGING cg_data = lv_config_str ).
-    ls_config_appl-xcontent = zcl_abapgit_object_wdcx_util=>string_2_xstring( lv_config_str ).
+    ls_config_appl-xcontent = zcl_abapgit_object_wdcx_util=>xmlnode_2_xstring(
+      io_xml       = io_xml->get_raw( )
+      iv_node_name = 'CONFIG_DATA' ).
+*    io_xml->read( EXPORTING iv_name = 'CONFIG_DATA'
+*                 CHANGING cg_data = lv_config_str ).
+*    ls_config_appl-xcontent = zcl_abapgit_object_wdcx_util=>string_2_xstring( lv_config_str ).
 
 ************************************************************************
 * Fill the identifiers back, which has been cleaned by the serializer
@@ -227,10 +230,10 @@ CLASS ZCL_ABAPGIT_OBJECT_WDCA IMPLEMENTATION.
 
   METHOD zif_abapgit_object~serialize.
     DATA:
-      ls_config_appl     TYPE wdy_config_appl,
-      lt_config_appt     TYPE STANDARD TABLE OF wdy_config_appt WITH NON-UNIQUE DEFAULT KEY,
-      lt_config_compt    TYPE STANDARD TABLE OF wdy_config_compt WITH NON-UNIQUE DEFAULT KEY,
-      lv_config_xstr     TYPE xstring.
+      ls_config_appl  TYPE wdy_config_appl,
+      lt_config_appt  TYPE STANDARD TABLE OF wdy_config_appt WITH NON-UNIQUE DEFAULT KEY,
+      lt_config_compt TYPE STANDARD TABLE OF wdy_config_compt WITH NON-UNIQUE DEFAULT KEY,
+      lv_config_xstr  TYPE xstring.
 
     FIELD-SYMBOLS:
       <ls_config_appt>  LIKE LINE OF lt_config_appt[],
@@ -305,7 +308,9 @@ CLASS ZCL_ABAPGIT_OBJECT_WDCA IMPLEMENTATION.
                  ig_data = lt_config_appt[] ).
     io_xml->add( iv_name = 'WDY_CONFIG_COMPT'
                  ig_data = lt_config_compt[] ).
-    io_xml->add( iv_name = 'CONFIG_DATA'
-                 ig_data = zcl_abapgit_object_wdcx_util=>xstring_2_string( lv_config_xstr ) ).
+    io_xml->add_xml( iv_name = 'CONFIG_DATA'
+                 ii_xml = zcl_abapgit_object_wdcx_util=>xstring_2_xml( lv_config_xstr ) ).
+*    io_xml->add( iv_name = 'CONFIG_DATA'
+*                 ig_data = zcl_abapgit_object_wdcx_util=>xstring_2_string( lv_config_xstr ) ).
   ENDMETHOD.
 ENDCLASS.

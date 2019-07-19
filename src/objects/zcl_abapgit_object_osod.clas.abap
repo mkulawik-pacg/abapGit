@@ -144,22 +144,19 @@ CLASS ZCL_ABAPGIT_OBJECT_OSOD IMPLEMENTATION.
 * - the object name
 * - the package
 * - application component
-* Either create it in some namespace (different than /DBM/) or as Z or Y object (testing)
+* Either create it in some namespace or as Z or Y object
 ************************************************************************
     ASSERT ls_new_oltpsource-oltpsource+0(1) = 'Z' OR
       ls_new_oltpsource-oltpsource+0(1) = 'Y' OR
       ls_new_oltpsource-oltpsource+0(1) = '/'.
-    ASSERT ls_new_oltpsource-oltpsource+0(4) <> '/DBM/'.
 
     ASSERT iv_package+0(1) = 'Z' OR
       iv_package+0(1) = 'Y' OR
       iv_package+0(1) = '/'.
-    ASSERT iv_package+0(4) <> '/DBM/'.
 
     ASSERT ls_new_oltpsource-applnm+0(1) = 'Z' OR
       ls_new_oltpsource-applnm+0(1) = 'Y' OR
       ls_new_oltpsource-applnm+0(1) = '/'.
-    ASSERT ls_new_oltpsource-applnm+0(4) <> '/DBM/'.
 
 ************************************************************************
 * Read the current setting of RSADMIN-CONTENT_SYSTEM

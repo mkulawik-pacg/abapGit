@@ -84,9 +84,13 @@ CLASS ZCL_ABAPGIT_OBJECT_WDCC IMPLEMENTATION.
                  CHANGING cg_data = lt_config_datt[] ).
     io_xml->read( EXPORTING iv_name = 'WDY_CONFIG_COMPT'
                  CHANGING cg_data = lt_config_compt[] ).
-    io_xml->read( EXPORTING iv_name = 'CONFIG_DATA'
-                 CHANGING cg_data = lv_config_str ).
-    ls_config_data-xcontent = zcl_abapgit_object_wdcx_util=>string_2_xstring( lv_config_str ).
+    ls_config_data-xcontent = zcl_abapgit_object_wdcx_util=>xmlnode_2_xstring(
+      io_xml       = io_xml->get_raw( )
+      iv_node_name = 'CONFIG_DATA' ).
+*    io_xml->read( EXPORTING iv_name = 'CONFIG_DATA'
+*                 CHANGING cg_data = lv_config_str ).
+*    ls_config_data-xcontent = zcl_abapgit_object_wdcx_util=>string_2_xstring( lv_config_str ).
+
 
 ************************************************************************
 * Fill the identifiers back, which has been cleaned by the serializer
@@ -303,7 +307,9 @@ CLASS ZCL_ABAPGIT_OBJECT_WDCC IMPLEMENTATION.
                  ig_data = lt_config_datt[] ).
     io_xml->add( iv_name = 'WDY_CONFIG_COMPT'
                  ig_data = lt_config_compt[] ).
-    io_xml->add( iv_name = 'CONFIG_DATA'
-                 ig_data = zcl_abapgit_object_wdcx_util=>xstring_2_string( lv_config_xstr ) ).
+    io_xml->add_xml( iv_name = 'CONFIG_DATA'
+                 ii_xml = zcl_abapgit_object_wdcx_util=>xstring_2_xml( lv_config_xstr ) ).
+*    io_xml->add( iv_name = 'CONFIG_DATA'
+*                 ig_data = zcl_abapgit_object_wdcx_util=>xstring_2_string( lv_config_xstr ) ).
   ENDMETHOD.
 ENDCLASS.
