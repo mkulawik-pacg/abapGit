@@ -139,22 +139,6 @@ CLASS ZCL_ABAPGIT_OBJECT_OSOD IMPLEMENTATION.
     ENDLOOP.
     UNASSIGN <ls_oltpsource_text>.
 
-    BREAK-POINT.
-
-************************************************************************
-* Validate the input. The following combinations are allowed
-* - delivered version (OSOD) in the /... namespace
-* - active version (OSOA) in the Z or Y namespace
-* everything else is not allowed
-************************************************************************
-    IF ls_new_oltpsource-oltpsource+0(1) = 'Z' OR ls_new_oltpsource-oltpsource+0(1) = 'Y'.
-      ASSERT me->mv_objvers = me->mc_objvers_a.
-    ELSEIF ls_new_oltpsource-oltpsource+0(1) = '/'.
-      ASSERT me->mv_objvers = me->mc_objvers_d.
-    ELSE.
-      ASSERT 1 = 2.
-    ENDIF.
-
 ************************************************************************
 * Validate:
 * - the object name
