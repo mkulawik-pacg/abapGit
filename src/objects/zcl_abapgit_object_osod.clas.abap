@@ -106,13 +106,13 @@ CLASS ZCL_ABAPGIT_OBJECT_OSOD IMPLEMENTATION.
 ** Fill the identifiers back, which has been cleaned by the serializer
 *************************************************************************
     LOOP AT lt_oltpsource_text[] ASSIGNING <ls_oltpsource_text>.
-      <ls_oltpsource_text>-oltpsource = me->ms_item-obj_name.
+      <ls_oltpsource_text>-oltpsource = ls_new_oltpsource-oltpsource.
       <ls_oltpsource_text>-objvers    = me->mv_objvers.
     ENDLOOP.
     UNASSIGN <ls_oltpsource_text>.
 
     LOOP AT lt_oltpsource_field[] ASSIGNING <ls_oltpsource_field>.
-      <ls_oltpsource_field>-oltpsource = me->ms_item-obj_name.
+      <ls_oltpsource_field>-oltpsource = ls_new_oltpsource-oltpsource.
       <ls_oltpsource_field>-objvers    = me->mv_objvers.
     ENDLOOP.
     UNASSIGN <ls_oltpsource_field>.
@@ -146,17 +146,26 @@ CLASS ZCL_ABAPGIT_OBJECT_OSOD IMPLEMENTATION.
 * - application component
 * Either create it in some namespace or as Z or Y object
 ************************************************************************
-    ASSERT ls_new_oltpsource-oltpsource+0(1) = 'Z' OR
+    IF ls_new_oltpsource-oltpsource+0(1) = 'Z' OR
       ls_new_oltpsource-oltpsource+0(1) = 'Y' OR
       ls_new_oltpsource-oltpsource+0(1) = '/'.
+    ELSE.
+      zcx_abapgit_exception=>raise( |Invalid OLT Source Name { ls_new_oltpsource-oltpsource } | ) ##NO_TEXT.
+    ENDIF.
 
-    ASSERT iv_package+0(1) = 'Z' OR
+    IF iv_package+0(1) = 'Z' OR
       iv_package+0(1) = 'Y' OR
       iv_package+0(1) = '/'.
+    ELSE.
+      zcx_abapgit_exception=>raise( |Invalid Package { ls_new_oltpsource-oltpsource } | ) ##NO_TEXT.
+    ENDIF.
 
-    ASSERT ls_new_oltpsource-applnm+0(1) = 'Z' OR
+    IF ls_new_oltpsource-applnm+0(1) = 'Z' OR
       ls_new_oltpsource-applnm+0(1) = 'Y' OR
       ls_new_oltpsource-applnm+0(1) = '/'.
+    ELSE.
+      zcx_abapgit_exception=>raise( |Invalid Application { ls_new_oltpsource-applnm } | ) ##NO_TEXT.
+    ENDIF.
 
 ************************************************************************
 * Read the current setting of RSADMIN-CONTENT_SYSTEM
