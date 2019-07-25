@@ -173,7 +173,8 @@ CLASS ZCL_ABAPGIT_OBJECT_VIEW IMPLEMENTATION.
 
     SELECT SINGLE viewname FROM dd25l INTO lv_viewname
       WHERE viewname = ms_item-obj_name
-      AND as4local IN ('A', 'L', 'N').
+      AND as4local IN ('A', 'L', 'N')
+      AND aggtype = 'V'.
     rv_bool = boolc( sy-subrc = 0 ).
 
     IF rv_bool = abap_true.
