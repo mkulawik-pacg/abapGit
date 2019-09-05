@@ -80,6 +80,17 @@ CLASS ZCL_ABAPGIT_OBJECT_CUS1 IMPLEMENTATION.
       CHANGING
         cg_data = ls_customzing_activity ).
 
+* KAM 2019.09.04 {
+    IF ls_customzing_activity-activity_header-act_type EQ 'C' AND ls_customzing_activity-objects_title[] IS NOT INITIAL.
+      "In order to avoid a dump we have to perform this deletion
+      "The function S_CUS_ACTIVITY_SAVE does the same, but for the logon language
+      "Then, if we are calling the function with descriptions in EN and DE, and we are logged on in EN, then only EN descriptions are deleted by S_CUS_ACTIVITY_SAVE
+      "and INSERT CUS_ACTOBT FROM TABLE ICUS_ACTOBT.(line 62) dumps
+      DELETE FROM cus_actobt WHERE act_id = ls_customzing_activity-activity_header-act_id.
+    ENDIF.
+* KAM 2019.09.04 }
+
+
     CALL FUNCTION 'S_CUS_ACTIVITY_SAVE'
       EXPORTING
         activity                     = ls_customzing_activity-activity_header-act_id
