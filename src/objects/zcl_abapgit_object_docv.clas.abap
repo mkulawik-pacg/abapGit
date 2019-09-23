@@ -101,6 +101,8 @@ CLASS ZCL_ABAPGIT_OBJECT_DOCV IMPLEMENTATION.
       TABLES
         line    = ls_data-lines.
 
+    tadir_insert( iv_package ).
+
   ENDMETHOD.
 
 

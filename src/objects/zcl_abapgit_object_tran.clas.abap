@@ -550,10 +550,10 @@ CLASS ZCL_ABAPGIT_OBJECT_TRAN IMPLEMENTATION.
           lt_param_values TYPE tty_param_values,
           ls_rsstcd       TYPE rsstcd.
 
-
-    IF zif_abapgit_object~exists( ) = abap_true.
-      zif_abapgit_object~delete( ).
-    ENDIF.
+    "Do not delete now (2019-09-10) MIJ
+***    IF zif_abapgit_object~exists( ) = abap_true.
+***      zif_abapgit_object~delete( ).
+***    ENDIF.
 
     io_xml->read( EXPORTING iv_name = 'TSTC'
                   CHANGING cg_data = ls_tstc ).
@@ -579,6 +579,11 @@ CLASS ZCL_ABAPGIT_OBJECT_TRAN IMPLEMENTATION.
       WHEN OTHERS.
         zcx_abapgit_exception=>raise( 'Transaction, unknown CINFO' ).
     ENDCASE.
+
+    "Do deletion only in cse CINFO is known (2019-09-10) MIJ
+    IF zif_abapgit_object~exists( ) = abap_true.
+      zif_abapgit_object~delete( ).
+    ENDIF.
 
     IF ls_tstcp IS NOT INITIAL.
       split_parameters(

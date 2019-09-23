@@ -786,6 +786,9 @@ CLASS ZCL_ABAPGIT_OBJECTS IMPLEMENTATION.
     DATA lr_object  TYPE REF TO zif_abapgit_definitions=>ty_result.
     DATA ls_item    TYPE zif_abapgit_definitions=>ty_item.
     DATA lv_tabix   TYPE sy-tabix.
+    DATA: lt_ignore       TYPE STANDARD TABLE OF zabapgit_ignore,
+          lt_ignored_list TYPE STANDARD TABLE OF zabapgit_ignore,
+          lt_fields       TYPE STANDARD TABLE OF help_value.
 
     rt_results = it_results.
 
@@ -868,6 +871,40 @@ CLASS ZCL_ABAPGIT_OBJECTS IMPLEMENTATION.
          obj_name ASCENDING
          rstate   DESCENDING. " ensures that non-empty rstate is kept
     DELETE ADJACENT DUPLICATES FROM rt_results COMPARING obj_type obj_name.
+
+
+    "ignore objects which were marked to be ignored (2019-09-15) J.Mirek
+    SELECT *
+      FROM zabapgit_ignore
+      INTO TABLE lt_ignore.
+    LOOP AT lt_ignore ASSIGNING FIELD-SYMBOL(<ls_ignore>).
+      LOOP AT rt_results ASSIGNING FIELD-SYMBOL(<ls_results>) WHERE obj_type EQ <ls_ignore>-object AND obj_name EQ <ls_ignore>-obj_name.
+        APPEND <ls_ignore> TO lt_ignored_list.
+        DELETE rt_results.
+      ENDLOOP.
+    ENDLOOP.
+
+    IF lt_ignored_list IS NOT INITIAL.
+      SORT lt_ignored_list BY object obj_name.
+      DELETE ADJACENT DUPLICATES FROM lt_ignored_list COMPARING object obj_name.
+
+      APPEND INITIAL LINE TO lt_fields ASSIGNING FIELD-SYMBOL(<ls_fields>).
+      <ls_fields>-tabname = 'ZABAPGIT_IGNORE'.
+      <ls_fields>-fieldname = 'OBJ_NAME'.
+
+      CALL FUNCTION 'POPUP_TO_SHOW_DB_DATA_IN_TABLE'
+        EXPORTING
+          title_text        = 'Ignored objects'
+        TABLES
+          fields            = lt_fields
+          valuetab          = lt_ignored_list
+        EXCEPTIONS
+          field_not_in_ddic = 1
+          OTHERS            = 2.
+      IF sy-subrc <> 0.
+* Implement suitable error handling here
+      ENDIF.
+    ENDIF.
 
   ENDMETHOD.
 

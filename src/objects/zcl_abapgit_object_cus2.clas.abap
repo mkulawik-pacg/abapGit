@@ -94,6 +94,24 @@ CLASS ZCL_ABAPGIT_OBJECT_CUS2 IMPLEMENTATION.
       zcx_abapgit_exception=>raise( |error from deserialize CUS2 { mv_img_attribute } S_CUS_ATTRIBUTES_SAVE| ).
     ENDIF.
 
+    CALL FUNCTION 'RS_CORR_INSERT'
+      EXPORTING
+        object              = ms_item-obj_name
+        object_class        = ms_item-obj_type
+        mode                = 'I'
+        global_lock         = abap_true
+        devclass            = iv_package
+        master_language     = sy-langu
+        suppress_dialog     = abap_true
+      EXCEPTIONS
+        cancelled           = 1
+        permission_failure  = 2
+        unknown_objectclass = 3
+        OTHERS              = 4.
+    IF sy-subrc <> 0.
+      zcx_abapgit_exception=>raise( 'error from RS_CORR_INSERT, CUS2' ).
+    ENDIF.
+
   ENDMETHOD.
 
 
