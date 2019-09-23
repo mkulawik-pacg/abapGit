@@ -81,11 +81,13 @@ CLASS ZCL_ABAPGIT_OBJECT_OSOD IMPLEMENTATION.
       ls_new_oltpsource_text        LIKE LINE OF lt_new_oltpsource_text[],
       ls_rsadmin_content_system_org TYPE rsadmin,
       ls_rsadmin_content_system_tmp TYPE rsadmin,
-      lv_trnum                      TYPE trkorr.
+      lv_trnum                      TYPE trkorr,
+      lv_message_text               TYPE c LENGTH 1024.
 
     FIELD-SYMBOLS:
       <ls_oltpsource_text>  LIKE LINE OF lt_oltpsource_text[],
-      <ls_oltpsource_field> LIKE LINE OF lt_oltpsource_field[].
+      <ls_oltpsource_field> LIKE LINE OF lt_oltpsource_field[],
+      <ls_message>          LIKE LINE OF lt_messages[].
 
 ************************************************************************
 * Determine the transport to be used
@@ -135,6 +137,7 @@ CLASS ZCL_ABAPGIT_OBJECT_OSOD IMPLEMENTATION.
     LOOP AT lt_oltpsource_text[] ASSIGNING <ls_oltpsource_text>.
       CLEAR ls_new_oltpsource_text.
       MOVE-CORRESPONDING <ls_oltpsource_text> TO ls_new_oltpsource_text.
+      ls_new_oltpsource_text-oltpsource = ls_new_oltpsource-oltpsource.
       APPEND ls_new_oltpsource_text TO lt_new_oltpsource_text[].
     ENDLOOP.
     UNASSIGN <ls_oltpsource_text>.
@@ -143,7 +146,6 @@ CLASS ZCL_ABAPGIT_OBJECT_OSOD IMPLEMENTATION.
 * Validate:
 * - the object name
 * - the package
-* - application component
 * Either create it in some namespace or as Z or Y object
 ************************************************************************
     IF ls_new_oltpsource-oltpsource+0(1) = 'Z' OR
@@ -157,14 +159,7 @@ CLASS ZCL_ABAPGIT_OBJECT_OSOD IMPLEMENTATION.
       iv_package+0(1) = 'Y' OR
       iv_package+0(1) = '/'.
     ELSE.
-      zcx_abapgit_exception=>raise( |Invalid Package { ls_new_oltpsource-oltpsource } | ) ##NO_TEXT.
-    ENDIF.
-
-    IF ls_new_oltpsource-applnm+0(1) = 'Z' OR
-      ls_new_oltpsource-applnm+0(1) = 'Y' OR
-      ls_new_oltpsource-applnm+0(1) = '/'.
-    ELSE.
-      zcx_abapgit_exception=>raise( |Invalid Application { ls_new_oltpsource-applnm } | ) ##NO_TEXT.
+      zcx_abapgit_exception=>raise( |Invalid Package { iv_package } | ) ##NO_TEXT.
     ENDIF.
 
 ************************************************************************
@@ -214,6 +209,13 @@ CLASS ZCL_ABAPGIT_OBJECT_OSOD IMPLEMENTATION.
         cancelled              = 5
         OTHERS                 = 6.
     lv_subrc = sy-subrc.
+    LOOP AT lt_messages[] ASSIGNING <ls_message>.
+      MESSAGE ID <ls_message>-msgid TYPE <ls_message>-msgty NUMBER <ls_message>-msgno WITH
+      <ls_message>-msgv1 <ls_message>-msgv2 <ls_message>-msgv3 <ls_message>-msgv4
+      INTO lv_message_text.
+      ii_log->add( iv_msg = lv_message_text iv_type = <ls_message>-msgty is_item = me->ms_item ).
+    ENDLOOP.
+    UNASSIGN <ls_message>.
 ************************************************************************
 * Restore the original value of RSADMIN-CONTENT_SYSTEM
 ************************************************************************
