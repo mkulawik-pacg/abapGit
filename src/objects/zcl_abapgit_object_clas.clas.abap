@@ -60,6 +60,7 @@ CLASS ZCL_ABAPGIT_OBJECT_CLAS IMPLEMENTATION.
           lt_local_macros          TYPE seop_source_string,
           lt_test_classes          TYPE seop_source_string,
           lt_descriptions          TYPE zif_abapgit_definitions=>ty_seocompotx_tt,
+          lt_descriptions_sub      TYPE zif_abapgit_definitions=>ty_seosubcotx_tt,
           ls_class_key             TYPE seoclskey,
           lt_attributes            TYPE zif_abapgit_definitions=>ty_obj_attribute_tt.
 
@@ -107,10 +108,13 @@ CLASS ZCL_ABAPGIT_OBJECT_CLAS IMPLEMENTATION.
 
     io_xml->read( EXPORTING iv_name = 'DESCRIPTIONS'
                   CHANGING cg_data = lt_descriptions ).
+    io_xml->read( EXPORTING iv_name = 'DESCRIPTIONS_SUBCOMP'
+                  CHANGING cg_data = lt_descriptions_sub ).
 
     mi_object_oriented_object_fct->update_descriptions(
-      is_key          = ls_class_key
-      it_descriptions = lt_descriptions ).
+      is_key              = ls_class_key
+      it_descriptions     = lt_descriptions
+      it_descriptions_sub = lt_descriptions_sub ). "2019.10.30 added by KAM - handle descriptions of subcomponents
 
   ENDMETHOD.
 
@@ -194,13 +198,14 @@ CLASS ZCL_ABAPGIT_OBJECT_CLAS IMPLEMENTATION.
 
   METHOD serialize_xml.
 
-    DATA: ls_vseoclass    TYPE vseoclass,
-          lt_tpool        TYPE textpool_table,
-          lt_descriptions TYPE zif_abapgit_definitions=>ty_seocompotx_tt,
-          ls_clskey       TYPE seoclskey,
-          lt_sotr         TYPE zif_abapgit_definitions=>ty_sotr_tt,
-          lt_lines        TYPE tlinetab,
-          lt_attributes   TYPE zif_abapgit_definitions=>ty_obj_attribute_tt.
+    DATA: ls_vseoclass        TYPE vseoclass,
+          lt_tpool            TYPE textpool_table,
+          lt_descriptions     TYPE zif_abapgit_definitions=>ty_seocompotx_tt,
+          lt_descriptions_sub TYPE zif_abapgit_definitions=>ty_seosubcotx_tt,
+          ls_clskey           TYPE seoclskey,
+          lt_sotr             TYPE zif_abapgit_definitions=>ty_sotr_tt,
+          lt_lines            TYPE tlinetab,
+          lt_attributes       TYPE zif_abapgit_definitions=>ty_obj_attribute_tt.
 
     ls_clskey-clsname = ms_item-obj_name.
 
@@ -261,10 +266,19 @@ CLASS ZCL_ABAPGIT_OBJECT_CLAS IMPLEMENTATION.
                    ig_data = lt_lines ).
     ENDIF.
 
-    lt_descriptions = mi_object_oriented_object_fct->read_descriptions( ls_clskey-clsname ).
+    mi_object_oriented_object_fct->read_descriptions(
+      EXPORTING
+        iv_obejct_name      = ls_clskey-clsname
+      IMPORTING
+        et_descriptions     = lt_descriptions[]
+        et_descriptions_sub = lt_descriptions_sub[] ). "2019.10.30 added by KAM - handle descriptions of subcomponents
     IF lines( lt_descriptions ) > 0.
       io_xml->add( iv_name = 'DESCRIPTIONS'
                    ig_data = lt_descriptions ).
+    ENDIF.
+    IF lines( lt_descriptions_sub ) > 0.
+      io_xml->add( iv_name = 'DESCRIPTIONS_SUBCOMP'
+                   ig_data = lt_descriptions_sub ).
     ENDIF.
 
     lt_attributes = mi_object_oriented_object_fct->read_attributes( ls_clskey-clsname ).

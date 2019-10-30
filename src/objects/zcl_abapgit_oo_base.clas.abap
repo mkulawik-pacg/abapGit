@@ -237,10 +237,19 @@ CLASS ZCL_ABAPGIT_OO_BASE IMPLEMENTATION.
 
 
   METHOD zif_abapgit_oo_object_fnc~read_descriptions.
-    SELECT * FROM seocompotx INTO TABLE rt_descriptions
+    CLEAR et_descriptions[].
+    CLEAR et_descriptions_sub[].
+
+    SELECT * FROM seocompotx INTO TABLE et_descriptions
       WHERE clsname   = iv_obejct_name
         AND descript <> ''
       ORDER BY PRIMARY KEY.                               "#EC CI_SUBRC
+* 2019.10.30 added by KAM {
+    SELECT * FROM seosubcotx INTO TABLE et_descriptions_sub
+      WHERE clsname   = iv_obejct_name
+        AND descript <> ''
+      ORDER BY PRIMARY KEY.                               "#EC CI_SUBRC
+* 2019.10.30 added by KAM }
   ENDMETHOD.
 
 
@@ -312,5 +321,8 @@ CLASS ZCL_ABAPGIT_OO_BASE IMPLEMENTATION.
   METHOD zif_abapgit_oo_object_fnc~update_descriptions.
     DELETE FROM seocompotx WHERE clsname = is_key-clsname. "#EC CI_SUBRC
     INSERT seocompotx FROM TABLE it_descriptions.         "#EC CI_SUBRC
+
+    DELETE FROM seosubcotx WHERE clsname = is_key-clsname. "#EC CI_SUBRC
+    INSERT seosubcotx FROM TABLE it_descriptions_sub.      "#EC CI_SUBRC
   ENDMETHOD.
 ENDCLASS.

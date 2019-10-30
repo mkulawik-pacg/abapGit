@@ -45,10 +45,11 @@ CLASS ZCL_ABAPGIT_OBJECT_INTF IMPLEMENTATION.
 
 
   METHOD deserialize_abap.
-    DATA: ls_vseointerf   TYPE vseointerf,
-          lt_source       TYPE seop_source_string,
-          lt_descriptions TYPE zif_abapgit_definitions=>ty_seocompotx_tt,
-          ls_clskey       TYPE seoclskey.
+    DATA: ls_vseointerf       TYPE vseointerf,
+          lt_source           TYPE seop_source_string,
+          lt_descriptions     TYPE zif_abapgit_definitions=>ty_seocompotx_tt,
+          lt_descriptions_sub TYPE zif_abapgit_definitions=>ty_seosubcotx_tt,
+          ls_clskey           TYPE seoclskey.
 
 
     ls_clskey-clsname = ms_item-obj_name.
@@ -68,10 +69,13 @@ CLASS ZCL_ABAPGIT_OBJECT_INTF IMPLEMENTATION.
 
     io_xml->read( EXPORTING iv_name = 'DESCRIPTIONS'
                   CHANGING cg_data = lt_descriptions ).
+    io_xml->read( EXPORTING iv_name = 'DESCRIPTIONS_SUBCOMP'
+                  CHANGING cg_data = lt_descriptions_sub ).
 
     mi_object_oriented_object_fct->update_descriptions(
       is_key          = ls_clskey
-      it_descriptions = lt_descriptions ).
+      it_descriptions     = lt_descriptions
+      it_descriptions_sub = lt_descriptions_sub ). "2019.10.30 added by KAM - handle descriptions of subcomponents
 
     mi_object_oriented_object_fct->add_to_activation_list( ms_item ).
   ENDMETHOD.
@@ -138,6 +142,7 @@ CLASS ZCL_ABAPGIT_OBJECT_INTF IMPLEMENTATION.
   METHOD serialize_xml.
     DATA:
       lt_descriptions TYPE zif_abapgit_definitions=>ty_seocompotx_tt,
+      lt_descriptions_sub TYPE zif_abapgit_definitions=>ty_seosubcotx_tt,
       ls_vseointerf   TYPE vseointerf,
       ls_clskey       TYPE seoclskey,
       lt_lines        TYPE tlinetab.
@@ -168,10 +173,19 @@ CLASS ZCL_ABAPGIT_OBJECT_INTF IMPLEMENTATION.
                    ig_data = lt_lines ).
     ENDIF.
 
-    lt_descriptions = mi_object_oriented_object_fct->read_descriptions( ls_clskey-clsname ).
+    mi_object_oriented_object_fct->read_descriptions(
+      EXPORTING
+        iv_obejct_name      = ls_clskey-clsname
+      IMPORTING
+        et_descriptions     = lt_descriptions[]
+        et_descriptions_sub = lt_descriptions_sub[] ). "2019.10.30 added by KAM - handle descriptions of subcomponents
     IF lines( lt_descriptions ) > 0.
       io_xml->add( iv_name = 'DESCRIPTIONS'
                    ig_data = lt_descriptions ).
+    ENDIF.
+    IF lines( lt_descriptions_sub ) > 0.
+      io_xml->add( iv_name = 'DESCRIPTIONS_SUBCOMP'
+                   ig_data = lt_descriptions_sub ).
     ENDIF.
   ENDMETHOD.
 

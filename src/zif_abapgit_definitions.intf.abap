@@ -203,6 +203,8 @@ INTERFACE zif_abapgit_definitions
   TYPES:
     ty_seocompotx_tt TYPE STANDARD TABLE OF seocompotx WITH DEFAULT KEY .
   TYPES:
+    ty_seosubcotx_tt TYPE STANDARD TABLE OF seosubcotx WITH DEFAULT KEY .
+  TYPES:
     BEGIN OF ty_tpool.
       INCLUDE TYPE textpool.
   TYPES:   split TYPE c LENGTH 8.
