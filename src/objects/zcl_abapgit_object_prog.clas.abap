@@ -160,7 +160,8 @@ CLASS ZCL_ABAPGIT_OBJECT_PROG IMPLEMENTATION.
 
     io_xml->read( EXPORTING iv_name = 'DYNPROS'
                   CHANGING cg_data  = lt_dynpros ).
-    deserialize_dynpros( lt_dynpros ).
+    deserialize_dynpros( it_dynpros = lt_dynpros
+                         ii_log     = ii_log ).
 
     io_xml->read( EXPORTING iv_name = 'CUA'
                   CHANGING cg_data  = ls_cua ).

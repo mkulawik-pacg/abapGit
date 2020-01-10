@@ -4,7 +4,6 @@
   <asx:values>
    <PROGDIR>
     <NAME>SAPLZVABAPGITTIGNORE</NAME>
-    <SQLX>X</SQLX>
     <DBAPL>S</DBAPL>
     <DBNA>D$</DBNA>
     <SUBC>F</SUBC>

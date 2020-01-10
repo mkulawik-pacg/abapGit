@@ -53,22 +53,22 @@ CLASS zcl_abapgit_objects_program DEFINITION PUBLIC INHERITING FROM zcl_abapgit_
                 iv_package TYPE devclass
       RAISING   zcx_abapgit_exception.
 
-  PROTECTED SECTION.
+protected section.
 
-    TYPES:
-      ty_spaces_tt TYPE STANDARD TABLE OF i WITH DEFAULT KEY .
-    TYPES:
-      BEGIN OF ty_dynpro,
+  types:
+    ty_spaces_tt TYPE STANDARD TABLE OF i WITH DEFAULT KEY .
+  types:
+    BEGIN OF ty_dynpro,
         header     TYPE rpy_dyhead,
         containers TYPE dycatt_tab,
         fields     TYPE dyfatc_tab,
         flow_logic TYPE swydyflow,
         spaces     TYPE ty_spaces_tt,
       END OF ty_dynpro .
-    TYPES:
-      ty_dynpro_tt TYPE STANDARD TABLE OF ty_dynpro WITH DEFAULT KEY .
-    TYPES:
-      BEGIN OF ty_cua,
+  types:
+    ty_dynpro_tt TYPE STANDARD TABLE OF ty_dynpro WITH DEFAULT KEY .
+  types:
+    BEGIN OF ty_cua,
         adm TYPE rsmpe_adm,
         sta TYPE STANDARD TABLE OF rsmpe_stat WITH DEFAULT KEY,
         fun TYPE STANDARD TABLE OF rsmpe_funt WITH DEFAULT KEY,
@@ -83,70 +83,71 @@ CLASS zcl_abapgit_objects_program DEFINITION PUBLIC INHERITING FROM zcl_abapgit_
         biv TYPE STANDARD TABLE OF rsmpe_buts WITH DEFAULT KEY,
       END OF ty_cua .
 
-    METHODS serialize_dynpros
-      IMPORTING
-        !iv_program_name TYPE programm
-      RETURNING
-        VALUE(rt_dynpro) TYPE ty_dynpro_tt
-      RAISING
-        zcx_abapgit_exception .
-    METHODS serialize_cua
-      IMPORTING
-        !iv_program_name TYPE programm
-      RETURNING
-        VALUE(rs_cua)    TYPE ty_cua
-      RAISING
-        zcx_abapgit_exception .
-    METHODS deserialize_dynpros
-      IMPORTING
-        !it_dynpros TYPE ty_dynpro_tt
-      RAISING
-        zcx_abapgit_exception .
-    METHODS deserialize_textpool
-      IMPORTING
-        !iv_program    TYPE programm
-        !it_tpool      TYPE textpool_table
-        !iv_language   TYPE langu OPTIONAL
-        !iv_is_include TYPE abap_bool DEFAULT abap_false
-      RAISING
-        zcx_abapgit_exception .
-    METHODS deserialize_cua
-      IMPORTING
-        !iv_program_name TYPE programm
-        !is_cua          TYPE ty_cua
-      RAISING
-        zcx_abapgit_exception .
-    METHODS is_any_dynpro_locked
-      IMPORTING
-        !iv_program                    TYPE programm
-      RETURNING
-        VALUE(rv_is_any_dynpro_locked) TYPE abap_bool
-      RAISING
-        zcx_abapgit_exception .
-    METHODS is_cua_locked
-      IMPORTING
-        !iv_program             TYPE programm
-      RETURNING
-        VALUE(rv_is_cua_locked) TYPE abap_bool
-      RAISING
-        zcx_abapgit_exception .
-    METHODS is_text_locked
-      IMPORTING
-        !iv_program              TYPE programm
-      RETURNING
-        VALUE(rv_is_text_locked) TYPE abap_bool
-      RAISING
-        zcx_abapgit_exception .
-    CLASS-METHODS add_tpool
-      IMPORTING
-        !it_tpool       TYPE textpool_table
-      RETURNING
-        VALUE(rt_tpool) TYPE zif_abapgit_definitions=>ty_tpool_tt .
-    CLASS-METHODS read_tpool
-      IMPORTING
-        !it_tpool       TYPE zif_abapgit_definitions=>ty_tpool_tt
-      RETURNING
-        VALUE(rt_tpool) TYPE zif_abapgit_definitions=>ty_tpool_tt .
+  methods SERIALIZE_DYNPROS
+    importing
+      !IV_PROGRAM_NAME type PROGRAMM
+    returning
+      value(RT_DYNPRO) type TY_DYNPRO_TT
+    raising
+      ZCX_ABAPGIT_EXCEPTION .
+  methods SERIALIZE_CUA
+    importing
+      !IV_PROGRAM_NAME type PROGRAMM
+    returning
+      value(RS_CUA) type TY_CUA
+    raising
+      ZCX_ABAPGIT_EXCEPTION .
+  methods DESERIALIZE_DYNPROS
+    importing
+      !IT_DYNPROS type TY_DYNPRO_TT
+      !II_LOG type ref to ZIF_ABAPGIT_LOG
+    raising
+      ZCX_ABAPGIT_EXCEPTION .
+  methods DESERIALIZE_TEXTPOOL
+    importing
+      !IV_PROGRAM type PROGRAMM
+      !IT_TPOOL type TEXTPOOL_TABLE
+      !IV_LANGUAGE type LANGU optional
+      !IV_IS_INCLUDE type ABAP_BOOL default ABAP_FALSE
+    raising
+      ZCX_ABAPGIT_EXCEPTION .
+  methods DESERIALIZE_CUA
+    importing
+      !IV_PROGRAM_NAME type PROGRAMM
+      !IS_CUA type TY_CUA
+    raising
+      ZCX_ABAPGIT_EXCEPTION .
+  methods IS_ANY_DYNPRO_LOCKED
+    importing
+      !IV_PROGRAM type PROGRAMM
+    returning
+      value(RV_IS_ANY_DYNPRO_LOCKED) type ABAP_BOOL
+    raising
+      ZCX_ABAPGIT_EXCEPTION .
+  methods IS_CUA_LOCKED
+    importing
+      !IV_PROGRAM type PROGRAMM
+    returning
+      value(RV_IS_CUA_LOCKED) type ABAP_BOOL
+    raising
+      ZCX_ABAPGIT_EXCEPTION .
+  methods IS_TEXT_LOCKED
+    importing
+      !IV_PROGRAM type PROGRAMM
+    returning
+      value(RV_IS_TEXT_LOCKED) type ABAP_BOOL
+    raising
+      ZCX_ABAPGIT_EXCEPTION .
+  class-methods ADD_TPOOL
+    importing
+      !IT_TPOOL type TEXTPOOL_TABLE
+    returning
+      value(RT_TPOOL) type ZIF_ABAPGIT_DEFINITIONS=>TY_TPOOL_TT .
+  class-methods READ_TPOOL
+    importing
+      !IT_TPOOL type ZIF_ABAPGIT_DEFINITIONS=>TY_TPOOL_TT
+    returning
+      value(RT_TPOOL) type ZIF_ABAPGIT_DEFINITIONS=>TY_TPOOL_TT .
   PRIVATE SECTION.
     METHODS:
       condense_flow
@@ -393,7 +394,10 @@ CLASS ZCL_ABAPGIT_OBJECTS_PROGRAM IMPLEMENTATION.
           illegal_field_position = 9
           OTHERS                 = 10.
       IF sy-subrc <> 2 AND sy-subrc <> 0.
-        zcx_abapgit_exception=>raise( |Error from RPY_DYNPRO_INSERT: { sy-subrc }| ).
+        "Do not raise, just add error message and continue processing further screens (2020-01-10) J.Mirek
+        ii_log->add_error( iv_msg = |Error from RPY_DYNPRO_INSERT: { sy-subrc } SCREEN: { ls_dynpro-header-screen }| is_item = ms_item ).
+        CONTINUE.
+*        zcx_abapgit_exception=>raise( |Error from RPY_DYNPRO_INSERT: { sy-subrc } SCREEN: { ls_dynpro-header-screen }| ).
       ENDIF.
 * todo, RPY_DYNPRO_UPDATE?
 
